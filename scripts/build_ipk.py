@@ -23,7 +23,7 @@ ALLOWED_PREFIXES = (
 
 DEFAULT_PACKAGE = "gl-screen-e5800-i18n-zh-cn"
 DEFAULT_MAINTAINER = "tutugreen <https://tutu.green>"
-DEFAULT_HOMEPAGE = "https://tutu.green"
+DEFAULT_HOMEPAGE = "https://github.com/tutugreen/gl-screen-e5800-i18n-zh-cn"
 DEFAULT_DESCRIPTION = (
     "GL-E5800 screen Chinese i18n (lang + TTF).\n"
     " Author: tutugreen — https://tutu.green\n"
