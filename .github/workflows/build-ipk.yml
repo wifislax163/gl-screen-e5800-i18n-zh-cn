@@ -1,0 +1,52 @@
+name: Build IPK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  IBM_PLEX_SC_TAG: "@ibm/plex-sans-sc@1.1.0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache IBM Plex Sans SC zip
+        uses: actions/cache@v4
+        with:
+          path: assets/cache/ibm-plex-sans-sc/ibm-plex-sans-sc.zip
+          key: ibm-plex-sans-sc-${{ env.IBM_PLEX_SC_TAG }}
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Prepare overlay
+        run: python scripts/prepare_overlay.py
+
+      - name: Validate zh_cn keys
+        run: python scripts/validate_zh_cn.py
+
+      - name: Build ipk
+        id: build
+        run: |
+          VERSION=$(date -u +%Y-%m-%d-%H-%M-%S)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          python scripts/build_ipk.py --version "$VERSION"
+
+      - name: Upload ipk
+        uses: actions/upload-artifact@v4
+        with:
+          name: gl-screen-e5800-i18n-zh-cn-${{ steps.build.outputs.version }}
+          path: dist/*.ipk
+          if-no-files-found: error
