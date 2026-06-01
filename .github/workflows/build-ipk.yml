@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   IBM_PLEX_SC_TAG: "@ibm/plex-sans-sc@1.1.0"
@@ -50,3 +50,13 @@ jobs:
           name: gl-screen-e5800-i18n-zh-cn-${{ steps.build.outputs.version }}
           path: dist/*.ipk
           if-no-files-found: error
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.build.outputs.version }}
+        run: |
+          gh release create "v${VERSION}" dist/*.ipk \
+            --title "gl-screen-e5800-i18n-zh-cn ${VERSION}" \
+            --notes "Automated IPK build for GL-E5800 screen zh-CN language pack." \
+            --latest
